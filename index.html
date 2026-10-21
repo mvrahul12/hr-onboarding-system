@@ -1,0 +1,385 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR Employee Onboarding</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f3f6fc;
+    color: #172b4d;
+}
+
+header {
+    background: #172b4d;
+    color: white;
+    padding: 22px 7%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+header h2 {
+    margin: 0;
+}
+
+header p {
+    margin: 0;
+    font-size: 14px;
+}
+
+main {
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    margin-bottom: 22px;
+    border-radius: 12px;
+    box-shadow: 0 3px 15px #172b4d12;
+}
+
+h3 {
+    margin-top: 0;
+    color: #1456c0;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 7px;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+    font-size: 15px;
+}
+
+button {
+    background: #1764e8;
+    color: white;
+    padding: 13px 22px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+button:hover {
+    background: #104ab0;
+}
+
+.results {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.result-box {
+    background: #f7f9ff;
+    border: 1px solid #dce6fa;
+    border-radius: 9px;
+    padding: 18px;
+    min-width: 0;
+}
+
+.result-box h4 {
+    margin-top: 0;
+    color: #1456c0;
+}
+
+li {
+    margin-bottom: 9px;
+}
+
+.status {
+    display: inline-block;
+    padding: 7px 12px;
+    background: #fff0cf;
+    color: #945600;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+#output {
+    display: none;
+}
+
+.email {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    line-height: 1.6;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    color: #64748b;
+}
+
+@media (max-width: 650px) {
+    .form-grid, .results {
+        grid-template-columns: 1fr;
+    }
+
+    header {
+        padding: 20px;
+    }
+
+    .card {
+        padding: 18px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h2>👥 HR Employee Onboarding</h2>
+    <p>Multi-Agent HR Assistant</p>
+</header>
+
+<main>
+
+<section class="card">
+    <h3>➕ New Employee Details</h3>
+    <p>Enter employee information to start onboarding.</p>
+
+    <form id="onboardingForm">
+        <div class="form-grid">
+            <div>
+                <label for="name">Employee Name</label>
+                <input id="name" required placeholder="Enter full name">
+            </div>
+
+            <div>
+                <label for="email">Email Address</label>
+                <input id="email" type="email" required
+                       placeholder="employee@company.com">
+            </div>
+
+            <div>
+                <label for="department">Department</label>
+                <select id="department">
+                    <option>Engineering</option>
+                    <option>HR</option>
+                    <option>Sales</option>
+                    <option>Marketing</option>
+                    <option>Finance</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="joiningDate">Joining Date</label>
+                <input id="joiningDate" type="date" required>
+            </div>
+        </div>
+
+        <h4>Submitted Documents</h4>
+
+        <label><input type="checkbox" name="docs"
+          value="ID Proof" style="width:auto"> ID Proof</label>
+
+        <label><input type="checkbox" name="docs"
+          value="Address Proof" style="width:auto"> Address Proof</label>
+
+        <label><input type="checkbox" name="docs"
+          value="Education Certificate" style="width:auto">
+          Education Certificate</label>
+
+        <label><input type="checkbox" name="docs"
+          value="Bank Details" style="width:auto"> Bank Details</label>
+
+        <button type="submit">Start Onboarding →</button>
+    </form>
+</section>
+
+<section class="card" id="output">
+    <h3>📋 Onboarding Results</h3>
+
+    <p id="employeeInfo"></p>
+
+    <div class="results">
+        <div class="result-box">
+            <h4>📄 Document Agent</h4>
+            <p id="documentStatus"></p>
+            <ul id="missingDocs"></ul>
+        </div>
+
+        <div class="result-box">
+            <h4>✅ Task Agent</h4>
+            <ul id="tasks"></ul>
+        </div>
+
+        <div class="result-box">
+            <h4>🎓 Training Agent</h4>
+            <ul id="training"></ul>
+        </div>
+
+        <div class="result-box">
+            <h4>✉️ Welcome Agent</h4>
+            <div class="email" id="welcomeEmail"></div>
+        </div>
+    </div>
+</section>
+
+</main>
+
+<footer>
+    Built with ❤️ for HR Teams | Multi-Agent Onboarding System
+</footer>
+
+<script>
+const form = document.getElementById("onboardingForm");
+
+form.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    // Collect employee information
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const department = document.getElementById("department").value;
+    const joiningDate = document.getElementById("joiningDate").value;
+
+    const submitted = Array.from(
+        document.querySelectorAll('input[name="docs"]:checked')
+    ).map(input => input.value);
+
+    // Agent 1: Document checking
+    const required = [
+        "ID Proof",
+        "Address Proof",
+        "Education Certificate",
+        "Bank Details"
+    ];
+
+    const missing = required.filter(doc => !submitted.includes(doc));
+
+    document.getElementById("documentStatus").innerHTML =
+        missing.length === 0
+        ? '<span class="status" style="background:#dcfce7;color:#166534">Complete</span>'
+        : '<span class="status">Pending</span>';
+
+    const missingList = document.getElementById("missingDocs");
+    missingList.replaceChildren();
+
+    if (missing.length === 0) {
+        missingList.innerHTML = "<li>All required documents submitted.</li>";
+    } else {
+        missing.forEach(doc => addItem(missingList, doc));
+    }
+
+    // Agent 2: Task assignment
+    const taskList = [
+        "Complete HR registration",
+        "Sign employment agreement",
+        "Set up company email",
+        "Collect laptop and ID card",
+        "Attend HR orientation"
+    ];
+
+    if (department === "Engineering") {
+        taskList.push("Set up development environment");
+    }
+
+    const tasks = document.getElementById("tasks");
+    tasks.replaceChildren();
+
+    taskList.forEach(task => addItem(tasks, "☐ " + task));
+
+    // Agent 3: Department-based training
+    const courses = {
+        Engineering: [
+            "Company IT security",
+            "Code of conduct",
+            "Development tools training"
+        ],
+        HR: [
+            "Company policies",
+            "HR management system",
+            "Data privacy training"
+        ],
+        Sales: [
+            "Product knowledge",
+            "CRM training",
+            "Communication skills"
+        ],
+        Marketing: [
+            "Brand guidelines",
+            "Marketing tools",
+            "Data privacy training"
+        ],
+        Finance: [
+            "Financial systems",
+            "Company policies",
+            "Data privacy training"
+        ]
+    };
+
+    const training = document.getElementById("training");
+    training.replaceChildren();
+
+    courses[department].forEach(course => addItem(training, course));
+
+    // Agent 4: Welcome message
+    const welcome = `Subject: Welcome to the Company!
+
+Dear ${name},
+
+Welcome to our ${department} team!
+
+We are excited to have you join us on ${joiningDate}.
+
+HR will guide you through the onboarding process.
+
+Regards,
+Human Resources Team`;
+
+    document.getElementById("welcomeEmail").textContent = welcome;
+
+    // Display employee summary
+    document.getElementById("employeeInfo").textContent =
+        `Employee: ${name} | Email: ${email} | Department: ${department} | Joining Date: ${joiningDate}`;
+
+    // Show the final report
+    document.getElementById("output").style.display = "block";
+    document.getElementById("output").scrollIntoView({
+        behavior: "smooth"
+    });
+});
+
+// Helper to safely display list items
+function addItem(list, text) {
+    const item = document.createElement("li");
+    item.textContent = text;
+    list.appendChild(item);
+}
+</script>
+
+</body>
+</html>
